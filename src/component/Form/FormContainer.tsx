@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormProps, UseFormReturn } from 'react-hook-form';
 import { ZodType, ZodTypeDef } from 'zod';
+import { useEffect } from 'react';
 
 type FormProps<TFormValues extends FieldValues, Schema> = {
   className?: string;
@@ -25,6 +26,11 @@ export const FormContainer = <
   schema,
 }: FormProps<TFormValues, Schema>) => {
   const methods = useForm<TFormValues>({ ...options, resolver: schema && zodResolver(schema) });
+
+  useEffect(() => {
+    methods.reset();
+  }, [methods.formState.isSubmitSuccessful]);
+
   return (
     <form
       className={clsx('space-y-6', className)}
