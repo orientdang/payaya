@@ -1,23 +1,17 @@
 import * as React from 'react';
 import * as z from 'zod';
 import { useAuth } from '@/lib/auth';
-import { FormContainer } from '@/component/Form';
+import { ErrorMessage, FormContainer } from '@/component/Form';
 import { Button, Form } from 'react-bootstrap';
 
-const schema = z
-  .object({
-    email: z.string().min(1, 'Required'),
-    firstName: z.string().min(1, 'Required'),
-    lastName: z.string().min(1, 'Required'),
-    password: z.string().min(1, 'Required'),
-  })
-  .and(
-    z
-      .object({
-        teamId: z.string().min(1, 'Required'),
-      })
-      .or(z.object({ teamName: z.string().min(1, 'Required') })),
-  );
+const schema = z.object({
+  email: z.string().min(1, 'Required'),
+  name: z.string().min(1, 'Required'),
+  age: z.string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
+    message: 'Expected number, received a string',
+  }),
+  password: z.string().min(7, 'Required'),
+});
 
 type RegisterValues = {
   email: string;
@@ -35,28 +29,35 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
   return (
     <FormContainer<RegisterValues, typeof schema>
-      onSubmit={(values) => {
-        register(values);
+      onSubmit={async (values) => {
+        await register(values);
         onSuccess();
       }}
       schema={schema}
     >
       {({ register, formState }) => (
         <>
+          {console.log('form', formState.errors)}
           <Form.Group className='mb-3'>
             <Form.Label>Email address</Form.Label>
             <Form.Control placeholder='Enter email' {...register('email')} />
-            {formState.errors['email']?.message && (
-              <Form.Text className='text-danger'>{formState.errors['email']?.message}</Form.Text>
-            )}
+            <ErrorMessage message={formState.errors['email']?.message} />
           </Form.Group>
 
           <Form.Group className='mb-3'>
             <Form.Label>Password</Form.Label>
             <Form.Control type='password' placeholder='Password' {...register('password')} />
+            <ErrorMessage message={formState.errors['password']?.message} />
           </Form.Group>
           <Form.Group className='mb-3'>
-            <Form.Check type='checkbox' label='Check me out' />
+            <Form.Label>Name</Form.Label>
+            <Form.Control placeholder='Name' {...register('name')} />
+            <ErrorMessage message={formState.errors['name']?.message} />
+          </Form.Group>
+          <Form.Group className='mb-3'>
+            <Form.Label>Age</Form.Label>
+            <Form.Control type={'number'} placeholder='Age' {...register('age')} />
+            <ErrorMessage message={formState.errors['age']?.message} />
           </Form.Group>
           <Button type={'submit'} variant='primary'>
             Submit

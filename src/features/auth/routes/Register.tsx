@@ -4,5 +4,9 @@ import { RegisterForm } from '../components/RegisterForm';
 export const Register = () => {
   const navigate = useNavigate();
 
-  return <RegisterForm onSuccess={() => navigate('/app')} />;
+  return (
+    <div className={'container'}>
+      <RegisterForm onSuccess={() => navigate('/app')} />
+    </div>
+  );
 };

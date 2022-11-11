@@ -22,8 +22,8 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
   return (
     <FormContainer<LoginValues, typeof schema>
-      onSubmit={(values) => {
-        login(values);
+      onSubmit={async (values) => {
+        await login(values);
         onSuccess();
       }}
       schema={schema}
@@ -41,9 +41,9 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
           <Form.Group className='mb-3' controlId='formBasicPassword'>
             <Form.Label>Password</Form.Label>
             <Form.Control type='password' placeholder='Password' {...register('password')} />
-          </Form.Group>
-          <Form.Group className='mb-3' controlId='formBasicCheckbox'>
-            <Form.Check type='checkbox' label='Check me out' />
+            {formState.errors['password']?.message && (
+              <Form.Text className='text-danger'>{formState.errors['password']?.message}</Form.Text>
+            )}
           </Form.Group>
           <Button type={'submit'} variant='primary'>
             Submit
