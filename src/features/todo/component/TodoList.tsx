@@ -1,9 +1,8 @@
-import { useCreateTask, useTask } from '@/features/todo';
+import { useCreateTask, useDeleteTask, useTask, useUpdateTask } from '@/features/todo';
 import { FormContainer } from '@/component/Form';
-import { Button, Spinner } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import * as z from 'zod';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { useDeleteTask } from '@/features/todo/api/deleteTask';
 import LoadingOverlay from 'react-loading-overlay';
 
 const schema = z.object({
@@ -19,13 +18,17 @@ export const TodoList = () => {
 
   const tasksQuery = useTask();
   const deleteTaskMutation = useDeleteTask();
-
+  const updateTaskMutation = useUpdateTask();
   const createTaskMutation = useCreateTask();
 
   const { data } = tasksQuery;
 
   const onCheck = (id: string, completed: boolean) => {
     console.log(id, completed);
+    updateTaskMutation.mutate({
+      id,
+      completed,
+    });
   };
 
   const onRemove = (id: string) => {
@@ -60,8 +63,15 @@ export const TodoList = () => {
           );
         }}
       </FormContainer>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore*/}
       <LoadingOverlay
-        active={createTaskMutation?.isLoading || tasksQuery.isLoading}
+        active={
+          createTaskMutation?.isLoading ||
+          tasksQuery.isFetching ||
+          updateTaskMutation.isLoading ||
+          deleteTaskMutation.isLoading
+        }
         spinner
         styles={{
           overlay: (base: any) => ({
