@@ -1,8 +1,10 @@
 import { useCreateTask, useTask } from '@/features/todo';
 import { FormContainer } from '@/component/Form';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import * as z from 'zod';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useDeleteTask } from '@/features/todo/api/deleteTask';
+import LoadingOverlay from 'react-loading-overlay';
 
 const schema = z.object({
   description: z.string().min(1),
@@ -16,6 +18,7 @@ export const TodoList = () => {
   const [parent] = useAutoAnimate<HTMLUListElement>(/* optional config */);
 
   const tasksQuery = useTask();
+  const deleteTaskMutation = useDeleteTask();
 
   const createTaskMutation = useCreateTask();
 
@@ -26,7 +29,7 @@ export const TodoList = () => {
   };
 
   const onRemove = (id: string) => {
-    console.log(id);
+    deleteTaskMutation.mutate({ id });
   };
 
   const onSubmit = async (values: TodoValues) => {
@@ -57,30 +60,40 @@ export const TodoList = () => {
           );
         }}
       </FormContainer>
-      <ul className='list-group' ref={parent}>
-        {data?.data.map((todo) => (
-          <li
-            key={todo._id}
-            className='list-group-item'
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
-            <input
-              className='form-check-input me-3'
-              type='checkbox'
-              checked={todo.completed}
-              onChange={() => onCheck(todo._id, !todo.completed)}
-            />
-            <span style={{ flex: 1, textDecoration: todo.completed ? 'line-through' : 'none' }}>
-              {todo.description}
-            </span>
-            <button
-              className='fa fa-times'
-              style={{ background: 'none', border: 'none' }}
-              onClick={() => onRemove(todo._id)}
-            />
-          </li>
-        ))}
-      </ul>
+      <LoadingOverlay
+        active={createTaskMutation?.isLoading || tasksQuery.isLoading}
+        spinner
+        styles={{
+          overlay: (base: any) => ({
+            ...base,
+            background: '#c6c7c8',
+            opacity: 0.3,
+          }),
+        }}
+      >
+        <ul className='list-group' ref={parent}>
+          {data?.data.map((todo) => (
+            <li
+              key={todo._id}
+              className='list-group-item'
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <input
+                className='form-check-input me-3'
+                type='checkbox'
+                checked={todo.completed}
+                onChange={() => onCheck(todo._id, !todo.completed)}
+              />
+              <span style={{ flex: 1, textDecoration: todo.completed ? 'line-through' : 'none' }}>
+                {todo.description}
+              </span>
+              <Button variant={'danger'} onClick={() => onRemove(todo._id)}>
+                Delete
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </LoadingOverlay>
     </>
   );
 };
