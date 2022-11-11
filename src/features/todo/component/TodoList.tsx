@@ -81,7 +81,7 @@ export const TodoList = () => {
           }),
         }}
       >
-        {data?.data?.length > 0 && (
+        {data?.data && data?.data?.length > 0 && (
           <ul className='list-group' ref={parent}>
             {data?.data.map((todo) => (
               <li
