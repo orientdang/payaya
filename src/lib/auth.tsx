@@ -9,6 +9,7 @@ import {
   UserResponse,
 } from '@/features/auth';
 import storage from '@/utils/storage';
+import { Spinner } from 'react-bootstrap';
 
 async function handleUserResponse(data: UserResponse) {
   const { token, user } = data;
@@ -48,8 +49,8 @@ const authConfig = {
   logoutFn,
   LoaderComponent() {
     return (
-      <div className='w-screen h-screen flex justify-center items-center'>
-        <div>Spinner</div>
+      <div className='w-100 h-100'>
+        <Spinner />
       </div>
     );
   },

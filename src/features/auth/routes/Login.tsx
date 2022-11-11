@@ -5,7 +5,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={'container'}>
+    <div className={'container pt-5'}>
       <LoginForm onSuccess={() => navigate('/app')} />
     </div>
   );

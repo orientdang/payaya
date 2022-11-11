@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ErrorFallback() {
   return (
@@ -32,6 +34,7 @@ const AppProvider = ({ children }: AppProviderProps) => {
         </div>
       }
     >
+      <ToastContainer />
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>

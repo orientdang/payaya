@@ -1,13 +1,18 @@
 import { Suspense } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { lazyImport } from '@/utils/lazyImport';
+import { Spinner } from 'react-bootstrap';
 
 const { Todo } = lazyImport(() => import('@/features/todo'), 'Todo');
 
 const App = () => {
   return (
     <Suspense
-      fallback={<div className='h-full w-full flex items-center justify-center'>llllll</div>}
+      fallback={
+        <div className='w-100 h-100'>
+          <Spinner />
+        </div>
+      }
     >
       <Outlet />
     </Suspense>

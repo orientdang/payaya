@@ -3,6 +3,8 @@ import * as z from 'zod';
 import { useAuth } from '@/lib/auth';
 import { ErrorMessage, FormContainer } from '@/component/Form';
 import { Button, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const schema = z.object({
   email: z.string().min(1, 'Required'),
@@ -26,12 +28,19 @@ type RegisterFormProps = {
 
 export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
   const { register, isRegistering } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <FormContainer<RegisterValues, typeof schema>
       onSubmit={async (values) => {
-        await register(values);
-        onSuccess();
+        try {
+          await register(values);
+          onSuccess();
+        } catch (e) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          toast.error(e?.response?.data);
+        }
       }}
       schema={schema}
     >
@@ -61,6 +70,9 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
           </Form.Group>
           <Button type={'submit'} variant='primary'>
             Submit
+          </Button>
+          <Button variant={'link'} onClick={() => navigate('/login')}>
+            Go to Login
           </Button>
         </>
       )}

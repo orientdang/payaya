@@ -5,8 +5,8 @@ export const Register = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={'container'}>
-      <RegisterForm onSuccess={() => navigate('/app')} />
+    <div className={'container pt-5'}>
+      <RegisterForm onSuccess={() => navigate('/')} />
     </div>
   );
 };

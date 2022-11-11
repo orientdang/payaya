@@ -2,6 +2,8 @@ import * as z from 'zod';
 import { useAuth } from '@/lib/auth';
 import { Button, Form } from 'react-bootstrap';
 import { FormContainer } from '@/component/Form';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const schema = z.object({
   email: z.string().email().min(1, 'Required'),
@@ -18,13 +20,21 @@ type LoginFormProps = {
 };
 
 export const LoginForm = ({ onSuccess }: LoginFormProps) => {
-  const { login, isLoggingIn } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <FormContainer<LoginValues, typeof schema>
       onSubmit={async (values) => {
-        await login(values);
-        onSuccess();
+        try {
+          const result = await login(values);
+          console.log('result', result);
+          onSuccess();
+        } catch (e) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          toast.error(e?.response?.data);
+        }
       }}
       schema={schema}
     >
@@ -47,6 +57,9 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
           </Form.Group>
           <Button type={'submit'} variant='primary'>
             Submit
+          </Button>
+          <Button variant={'link'} onClick={() => navigate('/register')}>
+            Go to Registration
           </Button>
         </>
       )}

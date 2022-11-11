@@ -81,28 +81,30 @@ export const TodoList = () => {
           }),
         }}
       >
-        <ul className='list-group' ref={parent}>
-          {data?.data.map((todo) => (
-            <li
-              key={todo._id}
-              className='list-group-item'
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <input
-                className='form-check-input me-3'
-                type='checkbox'
-                checked={todo.completed}
-                onChange={() => onCheck(todo._id, !todo.completed)}
-              />
-              <span style={{ flex: 1, textDecoration: todo.completed ? 'line-through' : 'none' }}>
-                {todo.description}
-              </span>
-              <Button variant={'danger'} onClick={() => onRemove(todo._id)}>
-                Delete
-              </Button>
-            </li>
-          ))}
-        </ul>
+        {data?.data?.length > 0 && (
+          <ul className='list-group' ref={parent}>
+            {data?.data.map((todo) => (
+              <li
+                key={todo._id}
+                className='list-group-item'
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <input
+                  className='form-check-input me-3'
+                  type='checkbox'
+                  checked={todo.completed}
+                  onChange={() => onCheck(todo._id, !todo.completed)}
+                />
+                <span style={{ flex: 1, textDecoration: todo.completed ? 'line-through' : 'none' }}>
+                  {todo.description}
+                </span>
+                <Button variant={'danger'} onClick={() => onRemove(todo._id)}>
+                  Delete
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
       </LoadingOverlay>
     </>
   );
